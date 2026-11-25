@@ -2,14 +2,16 @@
 
 A lightweight SOC Phishing Triage platform built for the **DEPI (Digital Egypt Pioneers Initiative)** SOC Track. It automates `.eml` and `.msg` ingestion, SMTP header forensics (SPF, DKIM, DMARC, routing hops), embedded URL and attachment analysis, Threat Intelligence enrichment ([VirusTotal API v3](https://docs.virustotal.com/reference/overview) and [AbuseIPDB API v2](https://docs.abuseipdb.com/)), weighted phishing risk scoring, and HTML/PDF triage report generation.
 
-## Team Roles (Update with Member Names Before GitHub Submission)
+## Team Roles
 
 | Role | Assigned Team Member | Primary Ownership |
 | :--- | :--- | :--- |
-| Team Lead & System Architect | `[Team Member 1]` | Repository structure, pipeline orchestration, SQLite schema, documentation |
-| Email Ingestion & Header Forensics Engineer | `[Team Member 2]` | Phase 1 (`email_parser.py`) & Phase 2 (`header_forensics.py`) |
-| Threat Intel & Artifact Triage Engineer | `[Team Member 3]` | Phase 3 (`url_attachment_analyzer.py`, `threat_intel.py`) |
-| Web Dashboard, Reporting & QA Engineer | `[Team Member 4]` | Phase 4 (`app.py`, `risk_scorer.py`, `report_generator.py`, `tests/`) |
+| Team Lead & System Architect | | Repository structure, pipeline orchestration (`triage/pipeline.py`), SQLite schema, documentation |
+| Email Ingestion & Header Forensics Engineer | | Phase 1 (`email_parser.py`) & Phase 2 (`header_forensics.py`) |
+| Authentication & Email Security Engineer | | SPF/DKIM/DMARC re-validation (`auth_revalidate.py`), DNS checks, security notes |
+| Threat Intel & Artifact Triage Engineer | | Phase 3 (`url_attachment_analyzer.py`, `threat_intel.py`) |
+| Web Dashboard & Reporting Engineer | | Phase 4 (`app.py`, `risk_scorer.py`, `report_generator.py`) |
+| QA & Test Engineer | | `tests/`, sample emails in `samples/`, test runs and demo checks |
 
 ## Quick Start
 
