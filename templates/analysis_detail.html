@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h4 class="fw-bold mb-0">{{ analysis.envelope.subject }}</h4>
+    <div class="text-muted small">{{ analysis.id }} · {{ analysis.source_filename }} · {{ analysis.analyzed_at }}</div>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('export_html', case_id=analysis.id) }}" class="btn btn-outline-secondary btn-sm">Export HTML</a>
+    <a href="{{ url_for('export_pdf', case_id=analysis.id) }}" class="btn btn-primary btn-sm">Export PDF Report</a>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-4">
+    <div class="card card-soc p-4 text-center h-100">
+      <div class="score-circle bg-{{ analysis.risk.badge_class }} mb-3">
+        <span class="fs-2">{{ analysis.risk.score }}</span>
+        <span class="small">/ 100</span>
+      </div>
+      <h6 class="fw-bold">{{ analysis.risk.verdict }}</h6>
+      <p class="small text-muted mb-1"><strong>Suggested next step (analyst decides):</strong> {{ analysis.risk.recommended_action }}</p>
+      <p class="small text-muted mb-0">Heuristic score, not a confirmed verdict. Corroborate before acting.</p>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card card-soc p-4 h-100">
+      <h6 class="fw-bold mb-3">Envelope & Authentication Status</h6>
+      <div class="mb-3 d-flex gap-2 flex-wrap">
+        <span class="badge bg-dark" title="Claimed in headers">SPF (claimed): {{ analysis.forensics.authentication.spf }}</span>
+        <span class="badge bg-dark" title="Claimed in headers">DKIM (claimed): {{ analysis.forensics.authentication.dkim }}</span>
+        <span class="badge bg-dark" title="Claimed in headers">DMARC (claimed): {{ analysis.forensics.authentication.dmarc }}</span>
+        <span class="badge bg-secondary">Origin IP: {{ analysis.forensics.routing.origin_ip or 'N/A' }}</span>
+      </div>
+      {% set rv = analysis.forensics.revalidation %}
+      {% if rv %}
+      <div class="small mb-3 p-2 border rounded bg-light">
+        <div class="fw-semibold mb-1">Re-validated by this tool (not just read from headers)</div>
+        {% for k in ['spf','dkim','dmarc'] %}
+        <div><span class="badge bg-info text-dark">{{ k|upper }}: {{ rv[k].result }}</span>
+          <span class="text-muted">{{ rv[k].note }}</span></div>
+        {% endfor %}
+        <div class="text-muted mt-1">The badges above are claims written in the email headers and can be forged. A mismatch with the re-check is not proof of forgery. "unavailable" and "inconclusive" never count as a pass.</div>
+      </div>
+      {% endif %}
+      <dl class="row small mb-0">
+        <dt class="col-sm-3">From</dt><dd class="col-sm-9 code-mono">{{ analysis.envelope.from_raw }}</dd>
+        <dt class="col-sm-3">Return-Path</dt><dd class="col-sm-9 code-mono">{{ analysis.envelope.return_path_raw or '(none)' }}</dd>
+        <dt class="col-sm-3">Reply-To</dt><dd class="col-sm-9 code-mono">{{ analysis.envelope.reply_to_raw or '(none)' }}</dd>
+        <dt class="col-sm-3">To</dt><dd class="col-sm-9 code-mono">{{ analysis.envelope.to_addresses | join(', ') }}</dd>
+      </dl>
+    </div>
+  </div>
+</div>
+
+<div class="card card-soc p-4 mb-4">
+  <h6 class="fw-bold mb-3">Routing Hop Map ({{ analysis.forensics.routing.hop_count }} hops)</h6>
+  <table class="table table-sm small mb-0">
+    <thead><tr><th>#</th><th>From Host</th><th>By Host</th><th>IPs</th><th>Timestamp</th></tr></thead>
+    <tbody>
+      {% for hop in analysis.forensics.routing.hops %}
+      <tr>
+        <td>{{ hop.hop }}</td>
+        <td class="code-mono">{{ hop.from_host }}</td>
+        <td class="code-mono">{{ hop.by_host }}</td>
+        <td class="code-mono">{{ hop.ips | join(', ') }}</td>
+        <td>{{ hop.timestamp }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <div class="card card-soc p-4 h-100">
+      <h6 class="fw-bold mb-3">Embedded URLs ({{ analysis.urls | length }})</h6>
+      {% for u in analysis.urls %}
+      <div class="border rounded p-2 mb-2">
+        <div class="code-mono text-break fw-semibold">{{ u.url }}</div>
+        <div class="small text-muted">Risk: <strong>{{ u.heuristic_risk | upper }}</strong> · {{ u.heuristic_flags | join('; ') or 'No flags' }}</div>
+      </div>
+      {% else %}<p class="text-muted small mb-0">No embedded URLs found.</p>{% endfor %}
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card card-soc p-4 h-100">
+      <h6 class="fw-bold mb-3">Attachments ({{ analysis.attachments | length }})</h6>
+      {% for att in analysis.attachments %}
+      <div class="border rounded p-2 mb-2">
+        <div class="fw-semibold">{{ att.filename }} <span class="badge bg-secondary">{{ att.heuristic_rating | upper }}</span></div>
+        <div class="code-mono small text-muted">SHA-256: {{ att.sha256 }}</div>
+        <div class="small">{{ att.flags | join('; ') or 'No heuristic flags' }}</div>
+      </div>
+      {% else %}<p class="text-muted small mb-0">No attachments found.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

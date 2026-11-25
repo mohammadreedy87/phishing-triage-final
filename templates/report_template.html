@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Phishing Triage Report — {{ analysis.id }}</title>
+  <style>
+    body { font-family: Arial, sans-serif; color: #1e293b; margin: 32px; line-height: 1.5; }
+    h1 { color: #0f2942; border-bottom: 2px solid #0f2942; padding-bottom: 6px; }
+    h2 { color: #1b4965; margin-top: 24px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; font-size: 13px; }
+    th { background: #0f2942; color: #fff; }
+  </style>
+</head>
+<body>
+  <h1>SOC Phishing Triage Report</h1>
+  <p><strong>Case ID:</strong> {{ analysis.id }} | <strong>File:</strong> {{ analysis.source_filename }} | <strong>Analyzed:</strong> {{ analysis.analyzed_at }}</p>
+  <p><strong>Risk Score:</strong> {{ analysis.risk.score }}/100 — <strong>{{ analysis.risk.verdict }}</strong></p>
+  <p><strong>Suggested next step (analyst decides):</strong> {{ analysis.risk.recommended_action }}</p>
+  <p><em>This is a heuristic score, not a confirmed verdict. Corroborate before acting.</em></p>
+  <h2>Envelope & Authentication</h2>
+  <table>
+    <tr><th>From</th><td>{{ analysis.envelope.from_raw }}</td></tr>
+    <tr><th>Return-Path</th><td>{{ analysis.envelope.return_path_raw }}</td></tr>
+    <tr><th>Subject</th><td>{{ analysis.envelope.subject }}</td></tr>
+    <tr><th>Origin IP</th><td>{{ analysis.forensics.routing.origin_ip }}</td></tr>
+    <tr><th>SPF / DKIM / DMARC (claimed in headers, unverified)</th><td>SPF={{ analysis.forensics.authentication.spf }}, DKIM={{ analysis.forensics.authentication.dkim }}, DMARC={{ analysis.forensics.authentication.dmarc }}</td></tr>
+    {% if analysis.forensics.revalidation %}<tr><th>Re-validated by this tool</th><td>SPF={{ analysis.forensics.revalidation.spf.result }}, DKIM={{ analysis.forensics.revalidation.dkim.result }}, DMARC={{ analysis.forensics.revalidation.dmarc.result }} (SPF and DMARC are conditional on an IP inferred from Received headers)</td></tr>{% endif %}
+  </table>
+  <h2>Risk Score Breakdown</h2>
+  <table>
+    <tr><th>Category</th><th>Points</th><th>Reason</th></tr>
+    {% for item in analysis.risk.breakdown %}
+    <tr><td>{{ item.category }}</td><td>+{{ item.points }}</td><td>{{ item.reason }}</td></tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

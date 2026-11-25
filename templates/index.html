@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-md-3"><div class="card card-soc p-3"><div class="text-muted small">Total Triaged</div><div class="fs-3 fw-bold">{{ stats.total }}</div></div></div>
+  <div class="col-md-3"><div class="card card-soc p-3"><div class="text-muted small">High / Critical</div><div class="fs-3 fw-bold text-danger">{{ stats.critical_high }}</div></div></div>
+  <div class="col-md-3"><div class="card card-soc p-3"><div class="text-muted small">Suspicious</div><div class="fs-3 fw-bold text-warning">{{ stats.medium }}</div></div></div>
+  <div class="col-md-3"><div class="card card-soc p-3"><div class="text-muted small">Intel Mode</div><div class="fs-6 fw-semibold mt-2">{{ intel_mode }}</div></div></div>
+</div>
+
+<div class="card card-soc p-4 mb-4">
+  <h5 class="fw-bold mb-2">Upload Suspicious Email Artifact</h5>
+  <p class="text-muted small mb-3">Supports RFC 5322 <code>.eml</code> and Outlook <code>.msg</code> files.</p>
+  <form action="{{ url_for('analyze') }}" method="post" enctype="multipart/form-data" class="row g-2 align-items-center">
+    <div class="col-md-9">
+      <input type="file" name="email_file" accept=".eml,.msg" class="form-control" required>
+    </div>
+    <div class="col-md-3 d-grid">
+      <button type="submit" class="btn btn-primary">Run Triage Analysis</button>
+    </div>
+  </form>
+</div>
+
+<div class="card card-soc p-4">
+  <h5 class="fw-bold mb-3">Recent Triage Cases</h5>
+  {% if history %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead><tr><th>Case ID</th><th>File</th><th>Sender</th><th>Subject</th><th>Score</th><th>Verdict</th><th></th></tr></thead>
+      <tbody>
+        {% for row in history %}
+        <tr>
+          <td class="code-mono">{{ row.id }}</td>
+          <td>{{ row.source_filename }}</td>
+          <td class="small">{{ row.sender }}</td>
+          <td>{{ row.subject }}</td>
+          <td><span class="fw-bold">{{ row.risk_score }}/100</span></td>
+          <td>{{ row.verdict }}</td>
+          <td><a href="{{ url_for('view_analysis', case_id=row.id) }}" class="btn btn-sm btn-outline-primary">Inspect</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-muted mb-0">No emails analyzed yet. Upload a sample from <code>samples/</code> to test.</p>
+  {% endif %}
+</div>
+{% endblock %}

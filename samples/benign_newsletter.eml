@@ -1,0 +1,16 @@
+Return-Path: <newsletter@corp-example.org>
+Received: from mail.corp-example.org (192.0.2.10) by mx01.corp-example.org with ESMTPS; Wed, 25 Nov 2026 10:00:05 +0200
+Authentication-Results: mx01.corp-example.org; spf=pass; dkim=pass; dmarc=pass
+DKIM-Signature: v=1; a=rsa-sha256; d=corp-example.org; s=default; b=simulatedsignature
+From: "Internal Comms" <newsletter@corp-example.org>
+To: team@corp-example.org
+Subject: Weekly Engineering Digest - November 2026
+Date: Wed, 25 Nov 2026 10:00:00 +0200
+Message-ID: <news-003@corp-example.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+
+Hello team,
+Read this week's release notes on our intranet: https://docs.corp-example.org/releases/nov-2026
+Best regards,
+Internal Communications

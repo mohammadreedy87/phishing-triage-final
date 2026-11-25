@@ -1,0 +1,26 @@
+Return-Path: <billing@vendor-payments-portal.top>
+Received: from relay.vendor-payments-portal.top (203.0.113.77) by mx01.corp-example.org with ESMTP; Wed, 25 Nov 2026 09:05:11 +0200
+Authentication-Results: mx01.corp-example.org; spf=softfail; dkim=none; dmarc=none
+From: "Accounts Payable" <billing@trusted-supplier.com>
+Reply-To: finance@vendor-payments-portal.top
+To: finance@corp-example.org
+Subject: Overdue Invoice #88412 - Wire Transfer Confirmation
+Date: Wed, 25 Nov 2026 09:05:00 +0200
+Message-ID: <inv-002@vendor-payments-portal.top>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="INVBOUND"
+
+--INVBOUND
+Content-Type: text/plain; charset="utf-8"
+
+Please review the overdue invoice attached and confirm the wire transfer today:
+http://bit.ly/verify-invoice-88412
+
+--INVBOUND
+Content-Type: application/vnd.ms-excel.sheet.macroEnabled.12; name="Invoice_88412.xlsm"
+Content-Disposition: attachment; filename="Invoice_88412.xlsm"
+Content-Transfer-Encoding: base64
+
+U2ltdWxhdGVkIG1hY3JvIHNhbXBsZSBmb3IgZGVtbyB0ZXN0aW5nLg==
+
+--INVBOUND--
